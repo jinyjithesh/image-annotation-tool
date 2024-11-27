@@ -7,22 +7,19 @@ const DraggableTextCard = () => {
   const [position, setPosition] = useState({ top: 100, left: 100 });
   const textRef = useRef(null);
 
-  // Function to handle text input change
   const handleTextChange = (e) => {
     setText(e.target.value);
   };
 
-  // Function to increase font size
   const increaseFontSize = () => {
     setFontSize((prevSize) => prevSize + 2);
   };
 
-  // Function to decrease font size
   const decreaseFontSize = () => {
-    setFontSize((prevSize) => Math.max(8, prevSize - 2)); // Prevent text from becoming too small
+    setFontSize((prevSize) => Math.max(8, prevSize - 2));
   };
 
-  // Handle dragging logic
+ 
   const handleMouseDown = (e) => {
     const offsetX = e.clientX - position.left;
     const offsetY = e.clientY - position.top;
@@ -43,7 +40,7 @@ const DraggableTextCard = () => {
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  // Function to delete text
+
   const deleteText = () => {
     setText('');
   };

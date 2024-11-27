@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Stage, Layer, Image as KonvaImage, Rect, Circle, Text } from "react-konva";
-import useImage from "../hooks/useImage"; // Assuming you have the custom hook
+import useImage from "../hooks/useImage"; 
 
 const ImageAnnotationTool = () => {
   const [annotations, setAnnotations] = useState([]);
@@ -8,7 +8,7 @@ const ImageAnnotationTool = () => {
   const [uploadedImage, setUploadedImage] = useState(null);
   const stageRef = useRef(null);
 
-  // Use custom useImage hook to load the image
+ 
   const [image] = useImage(uploadedImage || "");
 
   const handleFileChange = (e) => {
@@ -30,9 +30,9 @@ const ImageAnnotationTool = () => {
       y,
       type: selectedTool,
       id: annotations.length + 1,
-      width: 100, // default width for rectangle
-      height: 50, // default height for rectangle
-      radius: 30, // default radius for circle
+      width: 100, 
+      height: 50, 
+      radius: 30,
     };
     setAnnotations([...annotations, newAnnotation]);
   };

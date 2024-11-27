@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 
 const TextEditor = ({ text, setText }) => {
-  const [fontSize, setFontSize] = useState(16); // Initial font size
-
-
+  const [fontSize, setFontSize] = useState(16); 
   const increaseFontSize = () => {
     setFontSize((prevSize) => prevSize + 2);
   };
 
-
   const decreaseFontSize = () => {
     setFontSize((prevSize) => Math.max(8, prevSize - 2)); 
   };
+
   const deleteText = () => {
     setText('');
   };
