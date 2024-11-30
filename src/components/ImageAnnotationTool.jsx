@@ -30,7 +30,7 @@ const ImageAnnotationTool = () => {
       y,
       type: selectedTool,
       id: annotations.length + 1,
-      width: 100, 
+      width: 200, 
       height: 50, 
       radius: 30,
     };
@@ -130,3 +130,373 @@ const ImageAnnotationTool = () => {
 };
 
 export default ImageAnnotationTool;
+// import React, { useState } from 'react';
+// import { Stage, Layer, Image as KonvaImage, Text, Rect, Circle, Transformer } from 'react-konva';
+
+// import useImage from "../hooks/useImage"; 
+// const Annotation = ({ shapeProps, onSelect, onChange, onDelete }) => {
+//   const shapeRef = React.useRef();
+//   const transformerRef = React.useRef();
+
+//   React.useEffect(() => {
+//     if (shapeProps.isSelected && transformerRef.current) {
+//       transformerRef.current.nodes([shapeRef.current]);
+//       transformerRef.current.getLayer().batchDraw();
+//     }
+//   }, [shapeProps.isSelected]);
+
+//   return (
+//     <>
+//       {shapeProps.type === 'text' && (
+//         <Text
+//           ref={shapeRef}
+//           {...shapeProps}
+//           draggable
+//           onClick={onSelect}
+//           onTap={onSelect}
+//           onDragEnd={(e) => {
+//             onChange({
+//               ...shapeProps,
+//               x: e.target.x(),
+//               y: e.target.y(),
+//             });
+//           }}
+//           onTransformEnd={(e) => {
+//             const node = shapeRef.current;
+//             onChange({
+//               ...shapeProps,
+//               x: node.x(),
+//               y: node.y(),
+//               scaleX: node.scaleX(),
+//               scaleY: node.scaleY(),
+//               rotation: node.rotation(),
+//             });
+//           }}
+//           onDblClick={onDelete}
+//         />
+//       )}
+//       {shapeProps.type === 'rect' && (
+//         <Rect
+//           ref={shapeRef}
+//           {...shapeProps}
+//           draggable
+//           onClick={onSelect}
+//           onTap={onSelect}
+//           onDragEnd={(e) => {
+//             onChange({
+//               ...shapeProps,
+//               x: e.target.x(),
+//               y: e.target.y(),
+//             });
+//           }}
+//           onTransformEnd={(e) => {
+//             const node = shapeRef.current;
+//             onChange({
+//               ...shapeProps,
+//               width: node.width() * node.scaleX(),
+//               height: node.height() * node.scaleY(),
+//               scaleX: 1,
+//               scaleY: 1,
+//             });
+//           }}
+//           onDblClick={onDelete}
+//         />
+//       )}
+//       {shapeProps.type === 'circle' && (
+//         <Circle
+//           ref={shapeRef}
+//           {...shapeProps}
+//           draggable
+//           onClick={onSelect}
+//           onTap={onSelect}
+//           onDragEnd={(e) => {
+//             onChange({
+//               ...shapeProps,
+//               x: e.target.x(),
+//               y: e.target.y(),
+//             });
+//           }}
+//           onTransformEnd={(e) => {
+//             const node = shapeRef.current;
+//             onChange({
+//               ...shapeProps,
+//               radius: node.radius() * node.scaleX(),
+//               scaleX: 1,
+//               scaleY: 1,
+//             });
+//           }}
+//           onDblClick={onDelete}
+//         />
+//       )}
+//       {shapeProps.isSelected && <Transformer ref={transformerRef} />}
+//     </>
+//   );
+// };
+
+// const ImageAnnotationTool = () => {
+//   const [image, setImage] = useState(null);
+//   const [annotations, setAnnotations] = useState([]);
+//   const [selectedId, setSelectedId] = useState(null);
+//   const [loadedImage] = useImage(image);
+
+//   const handleImageUpload = (e) => {
+//     const file = e.target.files[0];
+//     const reader = new FileReader();
+//     reader.onload = () => setImage(reader.result);
+//     reader.readAsDataURL(file);
+//   };
+
+//   const addAnnotation = (type) => {
+//     const newAnnotation = {
+//       id: annotations.length + 1,
+//       type,
+//       x: 100,
+//       y: 100,
+//       width: 100,
+//       height: 100,
+//       radius: 50,
+//       text: type === 'text' ? 'Sample Text' : '',
+//       fontSize: 20,
+//       isSelected: false,
+//     };
+//     setAnnotations([...annotations, newAnnotation]);
+//   };
+
+//   const updateAnnotation = (id, newProps) => {
+//     setAnnotations(
+//       annotations.map((ann) => (ann.id === id ? { ...ann, ...newProps } : ann))
+//     );
+//   };
+
+//   const deleteAnnotation = (id) => {
+//     setAnnotations(annotations.filter((ann) => ann.id !== id));
+//   };
+
+//   const increaseSize = () => {
+//     setAnnotations(
+//       annotations.map((ann) =>
+//         ann.id === selectedId
+//           ? {
+//               ...ann,
+//               width: ann.width + 20,
+//               height: ann.height + 20,
+//               radius: ann.radius + 10,
+//               fontSize: ann.fontSize + 5,
+//             }
+//           : ann
+//       )
+//     );
+//   };
+
+//   return (
+//     <div>
+//       <input type="file" onChange={handleImageUpload} accept="image/*" />
+//       <button onClick={() => addAnnotation('text')}>Add Text</button>
+//       <button onClick={() => addAnnotation('rect')}>Add Rectangle</button>
+//       <button onClick={() => addAnnotation('circle')}>Add Circle</button>
+//       <button onClick={increaseSize} disabled={!selectedId}>
+//         Increase Size
+//       </button>
+
+//       <Stage
+//         width={window.innerWidth}
+//         height={window.innerHeight}
+//         onMouseDown={(e) => {
+//           if (e.target === e.target.getStage()) {
+//             setSelectedId(null);
+//           }
+//         }}
+//       >
+//         <Layer>
+//           {image && <KonvaImage image={loadedImage} />}
+//           {annotations.map((ann) => (
+//             <Annotation
+//               key={ann.id}
+//               shapeProps={{ ...ann, isSelected: ann.id === selectedId }}
+//               onSelect={() => setSelectedId(ann.id)}
+//               onChange={(newProps) => updateAnnotation(ann.id, newProps)}
+//               onDelete={() => deleteAnnotation(ann.id)}
+//             />
+//           ))}
+//         </Layer>
+//       </Stage>
+//     </div>
+//   );
+// };
+
+// export default ImageAnnotationTool;
+// import React, { useState, useRef } from 'react';
+// import { Stage, Layer, Image as KonvaImage, Text, Rect, Circle, Transformer } from 'react-konva';
+// import useImage from "../hooks/useImage"; 
+
+// const Annotation = ({ shapeProps, onSelect, onChange, onDelete }) => {
+//   const shapeRef = useRef();
+//   const transformerRef = useRef();
+
+//   React.useEffect(() => {
+//     if (shapeProps.isSelected) {
+//       transformerRef.current.nodes([shapeRef.current]);
+//       transformerRef.current.getLayer().batchDraw();
+//     }
+//   }, [shapeProps.isSelected]);
+
+//   return (
+//     <>
+//       {shapeProps.type === 'text' && (
+//         <Text
+//           ref={shapeRef}
+//           {...shapeProps}
+//           draggable
+//           text={shapeProps.text} // Prevent typing but still display text
+//           onClick={onSelect}
+//           onDragEnd={(e) => {
+//             onChange({
+//               ...shapeProps,
+//               x: e.target.x(),
+//               y: e.target.y(),
+//             });
+//           }}
+//           onTransformEnd={(e) => {
+//             const node = shapeRef.current;
+//             onChange({
+//               ...shapeProps,
+//               scaleX: node.scaleX(),
+//               scaleY: node.scaleY(),
+//               rotation: node.rotation(),
+//             });
+//           }}
+//           onDblClick={onDelete}
+//         />
+//       )}
+
+//       {shapeProps.type === 'rect' && (
+//         <Rect
+//           ref={shapeRef}
+//           {...shapeProps}
+//           draggable
+//           onClick={onSelect}
+//           onDragEnd={(e) => {
+//             onChange({
+//               ...shapeProps,
+//               x: e.target.x(),
+//               y: e.target.y(),
+//             });
+//           }}
+//           onTransformEnd={(e) => {
+//             const node = shapeRef.current;
+//             onChange({
+//               ...shapeProps,
+//               width: node.width() * node.scaleX(),
+//               height: node.height() * node.scaleY(),
+//               scaleX: 1,
+//               scaleY: 1,
+//             });
+//           }}
+//           onDblClick={onDelete}
+//         />
+//       )}
+
+//       {shapeProps.type === 'circle' && (
+//         <Circle
+//           ref={shapeRef}
+//           {...shapeProps}
+//           draggable
+//           onClick={onSelect}
+//           onDragEnd={(e) => {
+//             onChange({
+//               ...shapeProps,
+//               x: e.target.x(),
+//               y: e.target.y(),
+//             });
+//           }}
+//           onTransformEnd={(e) => {
+//             const node = shapeRef.current;
+//             onChange({
+//               ...shapeProps,
+//               radius: node.radius() * node.scaleX(),
+//               scaleX: 1,
+//               scaleY: 1,
+//             });
+//           }}
+//           onDblClick={onDelete}
+//         />
+//       )}
+
+//       {shapeProps.isSelected && <Transformer ref={transformerRef} />}
+//     </>
+//   );
+// };
+
+// const ImageAnnotationTool = () => {
+//   const [image, setImage] = useState(null);
+//   const [annotations, setAnnotations] = useState([]);
+//   const [selectedId, setSelectedId] = useState(null);
+//   const [loadedImage] = useImage(image);
+
+//   const handleImageUpload = (e) => {
+//     const file = e.target.files[0];
+//     const reader = new FileReader();
+//     reader.onload = () => setImage(reader.result);
+//     reader.readAsDataURL(file);
+//   };
+
+//   const addAnnotation = (type) => {
+//     const newAnnotation = {
+//       id: annotations.length + 1,
+//       type,
+//       x: 150,
+//       y: 150,
+//       width: 100,
+//       height: 100,
+//       radius: 50,
+//       text: type === 'text' ? 'Sample Text' : '',
+//       fontSize: 20,
+//       isSelected: false,
+//     };
+//     setAnnotations([...annotations, newAnnotation]);
+//   };
+
+//   const updateAnnotation = (id, newProps) => {
+//     setAnnotations(
+//       annotations.map((ann) => (ann.id === id ? { ...ann, ...newProps } : ann))
+//     );
+//   };
+
+//   const deleteAnnotation = (id) => {
+//     setAnnotations(annotations.filter((ann) => ann.id !== id));
+//   };
+
+//   return (
+//     <div>
+//       <input type="file" onChange={handleImageUpload} accept="image/*" />
+//       <button onClick={() => addAnnotation('text')}>Add Text</button>
+//       <button onClick={() => addAnnotation('rect')}>Add Rectangle</button>
+//       <button onClick={() => addAnnotation('circle')}>Add Circle</button>
+
+//       <Stage
+//         width={window.innerWidth}
+//         height={window.innerHeight}
+//         onMouseDown={(e) => {
+//           if (e.target === e.target.getStage()) {
+//             setSelectedId(null);
+//           }
+//         }}
+//       >
+//         <Layer>
+//           {loadedImage && <KonvaImage image={loadedImage} />}
+//           {annotations.map((ann) => (
+//             <Annotation
+//               key={ann.id}
+//               shapeProps={{ ...ann, isSelected: ann.id === selectedId }}
+//               onSelect={() => setSelectedId(ann.id)}
+//               onChange={(newProps) => updateAnnotation(ann.id, newProps)}
+//               onDelete={() => deleteAnnotation(ann.id)}
+//             />
+//           ))}
+//         </Layer>
+//       </Stage>
+//     </div>
+//   );
+// };
+
+// export default ImageAnnotationTool;
